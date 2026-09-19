@@ -7,7 +7,7 @@
 // güncellenmediğine YALNIZCA bu dosyanın kendi baytlarına bakarak karar
 // verir; sürüm başka bir dosyada dursaydı bu satır hiç değişmediği için
 // güncelleme hiç tetiklenmezdi. Bu satırı elle değiştirme.
-const SURUM = "ingilizce-ad6609cc5138";
+const SURUM = "ingilizce-e9663915c92f";
 
 const KABUK = [
   "./",
