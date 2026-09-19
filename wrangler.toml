@@ -1,1 +1,11 @@
-name = "ingilizce-gui-public
+# Bu düz bir statik site — build adımı yok, package.json yok.
+# Cloudflare'in Git entegrasyonu bu dosya olmadan projeyi Node.js
+# sanıp "npm run build" çalıştırmaya çalışıyor (package.json
+# bulamayınca ENOENT ile düşüyor). [assets] onun yerine dosyaların
+# doğrudan bu klasörden (repo kökü) statik olarak sunulacağını
+# söylüyor.
+name = "ingilizce-gui-public"
+compatibility_date = "2026-09-15"
+
+[assets]
+directory = "."

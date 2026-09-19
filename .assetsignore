@@ -3,4 +3,5 @@
 .git
 .wrangler
 wrangler.jsonc
+wrangler.toml
 .gitignore
