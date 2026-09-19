@@ -1,0 +1,6 @@
+# Cloudflare'ın statik dosya yükleyicisi bunları görmezden gelsin.
+# .git ve wrangler'ın kendi ürettiği dosyalar sitede sunulmamalı.
+.git
+.wrangler
+wrangler.jsonc
+.gitignore

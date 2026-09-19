@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#faf9f6">
+<title>İngilizce Çalışma Aracı — cümleyi kendin çevir, doğrusuyla karşılaştır</title>
+<meta name="description" content="Ortaokul öğrencileri için ücretsiz, çevrimdışı çalışan İngilizce alıştırma aracı: cümleyi oku, kendi çevirini yaz, doğrusuyla karşılaştır, yanıldığın kelimeleri kart olarak tekrar et. İki yön: İngilizce→Türkçe (anlama) ve Türkçe→İngilizce (üretme).">
+
+<!-- Bağlantı WhatsApp/X gibi yerlerde paylaşılınca çıplak link yerine
+     başlık-açıklama-görsel kartı görünsün diye (bkz. Kur'an aracındaki
+     aynı desen). -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="tr_TR">
+<meta property="og:site_name" content="İngilizce Çalışma Aracı">
+<meta property="og:title" content="İngilizce Çalışma Aracı — cümleyi kendin çevir, doğrusuyla karşılaştır">
+<meta property="og:description" content="Cümleyi oku, kendin çevir, doğrusuyla farkını gör. Ücretsiz, çevrimdışı, reklamsız — ortaokul öğrencileri için İngilizce alıştırma aracı.">
+<meta property="og:image" content="https://ingilizce-gui-public.selcukh.workers.dev/paylasim.png">
+<meta property="og:url" content="https://ingilizce-gui-public.selcukh.workers.dev/">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="canonical" href="https://ingilizce-gui-public.selcukh.workers.dev/">
+<!-- Google Search Console doğrulaması: property eklenince oradan
+     verilen içerik değerini buraya yaz (bkz. CLAUDE.md, "Yayın"). -->
+<!-- <meta name="google-site-verification" content="BURAYA_YAZ"> -->
+
+<!-- Tema, ilk boyamadan ÖNCE uygulanmalı: app.js'e bırakılırsa koyu
+     temada sayfa bir an beyaz yanıp sönüyor. Bu yüzden burada, satır
+     içi ve stil dosyasından da önce. -->
+<script>
+(function () {
+  try {
+    var secim = localStorage.getItem("ingilizce-tema");
+    if (secim !== "acik" && secim !== "koyu") {
+      secim = window.matchMedia
+        && window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "koyu" : "acik";
+    }
+    document.documentElement.setAttribute("data-tema", secim);
+  } catch (e) {
+    document.documentElement.setAttribute("data-tema", "acik");
+  }
+})();
+</script>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="ikon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="ikon-192.png">
+<!-- iOS Safari manifest.json'daki display:standalone'u eski sürümlerde
+     görmezden gelebiliyor; ana ekrana eklenince tam ekran açılması için
+     bunlar gerekiyor. -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="İngilizce">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- app.js'ten ÖNCE ve eski söz dizimiyle: app.js hiç ayrıştırılamasa
+     bile hatayı ekrana yazsın. Telefonda konsol yok. -->
+<div id="js-hata" hidden></div>
+<script>
+(function () {
+  function goster(m) {
+    var k = document.getElementById("js-hata");
+    if (!k) return;
+    k.hidden = false;
+    k.textContent = "Arayüz hatası — " + m;
+  }
+  window.onerror = function (m, kaynak, satir, sutun) {
+    goster(m + "  (" + (kaynak || "?").split("/").pop() + ":" + satir + ":" + sutun + ")");
+    return false;
+  };
+  window.addEventListener("unhandledrejection", function (o) {
+    goster("işlem başarısız: " + (o.reason && o.reason.message ? o.reason.message : o.reason));
+  });
+  window.setTimeout(function () {
+    if (!window.__arayuzHazir) goster("app.js yüklenmedi veya çalışmadı.");
+  }, 5000);
+})();
+</script>
+<script src="surum.js"></script>
+
+<header>
+  <nav class="gezinme">
+    <div class="gezinme-ust">
+      <div class="seviye-secim" id="seviye-secim"></div>
+      <div class="yon-secim" id="yon-secim">
+        <button type="button" data-yon="en_tr">
+          <span class="seviye-kod">EN → TR</span>
+          <span class="seviye-ad">Anlama</span>
+        </button>
+        <button type="button" data-yon="tr_en">
+          <span class="seviye-kod">TR → EN</span>
+          <span class="seviye-ad">Üretme</span>
+        </button>
+      </div>
+      <span class="bosluk"></span>
+      <button id="durum-ac" type="button">Durumum</button>
+      <button id="kart-calis" type="button">Kart çalış</button>
+      <button id="tema-dugme" type="button" aria-label="Temayı değiştir"></button>
+      <a class="yardim-link" href="yardim.html">Yardım</a>
+    </div>
+    <div class="gezinme-alt">
+      <form id="atla-form" autocomplete="off">
+        <label for="atla-no">No</label>
+        <input id="atla-no" type="text" inputmode="numeric" size="5"
+               autocomplete="off" aria-label="Cümle numarası">
+        <button type="submit">Git</button>
+      </form>
+    </div>
+  </nav>
+  <p id="konum" class="konum"></p>
+  <p id="gezinme-hata" class="gezinme-hata" hidden></p>
+</header>
+
+<main>
+<div id="calisma-ekrani">
+  <!-- Bir grup, üç ayrı görünür kutu: cümle+çeviri alanı, senin
+       çevirin, doğru çeviri (+ kelime paneli, işaretlenenler — hepsi
+       kendi kutusunda). Tek kutuya sıkıştırınca (ilk deneme) cevap
+       verildikten sonra düz metin yığını gibi görünüyordu; kutular
+       ayrılınca "senin" ile "doğrusu" göz gezdirirken karışmıyor. -->
+  <section id="cumle-karti">
+    <!-- Önceki/Sonraki artık üstteki gezinme çubuğunda değil, tam
+         sorunun yanında — elini karttan kaldırmadan ileri geri
+         gidilsin diye. "No / Git" (belirli bir cümleye atlama) ayrı
+         bir eylem olduğu için üstte kaldı. -->
+    <div class="cumle-gezinme">
+      <button id="onceki" type="button" class="ok-dugmesi" aria-label="Önceki cümle" title="Önceki cümle">‹</button>
+      <div class="kutu" id="cumle-kutusu">
+        <!-- #ingilizce TEK düğüm: tıklanabilir İngilizce metin, kelime
+             paneli/hata kaydı/kart havuzu ona bağlı. Yöne göre yeri
+             değişir — EN->TR'de hep burada (soru); TR->EN'de cevap
+             açılana kadar gizli, açılınca aşağıdaki doğru kutusuna
+             taşınır (bkz. app.js: ingilizceYerlestir). Taşınan aynı
+             düğüm olduğu için olay dinleyicisi bozulmaz. -->
+        <p id="ingilizce" class="ingilizce" lang="en"></p>
+        <p id="soru-tr" class="ingilizce" dir="ltr" hidden></p>
+
+        <div id="ceviri-alani">
+          <textarea id="ceviri-metin" rows="4"
+            placeholder="Cümlenin Türkçesini buraya yaz…"></textarea>
+          <div class="satir">
+            <button id="ceviri-kaydet" class="birincil" type="button">Çeviriyi kaydet</button>
+            <span id="ceviri-durum" class="durum"></span>
+          </div>
+          <p class="ipucu" id="cumle-ipucu">
+            Bilmediğin kelimeye dokunabilirsin, anlamı açılır — ama o
+            kelime kelime kartlarına eklenir.
+          </p>
+        </div>
+      </div>
+      <button id="sonraki" type="button" class="ok-dugmesi" aria-label="Sonraki cümle" title="Sonraki cümle">›</button>
+    </div>
+
+    <div id="referans-alani" hidden>
+      <div class="kutu">
+        <span class="kutu-baslik" id="senin-baslik">Senin çevirin</span>
+        <p id="senin-ceviri-metni"></p>
+      </div>
+      <div class="kutu dogru" id="dogru-kutusu">
+        <span class="kutu-baslik" id="dogru-baslik">Doğru çeviri</span>
+        <p id="referans-metin"></p>
+        <div id="alt-blok" hidden>
+          <span class="kutu-baslik">Başka doğru yollar</span>
+          <ul id="alt-liste"></ul>
+        </div>
+        <p class="ipucu" id="dogru-ipucu"></p>
+      </div>
+    </div>
+
+    <div class="kutu" id="kelime-bolum" hidden>
+      <h2>Kelime — <span id="kelime-baslik" lang="en"></span></h2>
+      <p id="kelime-anlam" class="kelime-anlam"></p>
+      <p class="ipucu" id="ipucu-notu" hidden>
+        Bu kelimeye baktın — kelime kartlarına eklendi. Neyi yanlış
+        yaptığını, doğru çeviriyi gördükten sonra işaretleyebilirsin.
+      </p>
+      <form id="hata-form">
+        <fieldset>
+          <legend>Bu kelimede ne oldu?</legend>
+          <label><input type="radio" name="kategori" value="kelime_bilmiyorum" checked> Kelimeyi bilmiyordum</label>
+          <label><input type="radio" name="kategori" value="baska_anlam"> Kelimeyi biliyordum ama burada başka anlama gelmiş</label>
+          <label><input type="radio" name="kategori" value="cumle_kurulumu"> Kelimeleri bildim, cümleyi yanlış kurdum</label>
+        </fieldset>
+        <button type="button" id="detay-ac" class="baglanti-dugme">+ Detaylı yaz (istersen)</button>
+        <div id="detay-alanlar" hidden>
+          <label for="hata-dogru-hali">Bu cümlede ne demek?</label>
+          <input id="hata-dogru-hali" type="text" autocomplete="off"
+                 placeholder="Örnek: burada “gitmek” değil, “olmak” demek">
+          <label for="hata-not">Sen ne sanmıştın?</label>
+          <textarea id="hata-not" rows="3" placeholder="Boş bırakabilirsin…"></textarea>
+        </div>
+        <div class="satir">
+          <button class="birincil" type="submit">İşaretle</button>
+          <button type="button" id="hata-iptal">Kapat</button>
+          <span id="hata-durum" class="durum"></span>
+        </div>
+      </form>
+    </div>
+
+    <div class="kutu" id="kayitli-hatalar" hidden>
+      <h2>Bu cümlede işaretlediklerin</h2>
+      <ul id="hata-liste"></ul>
+    </div>
+  </section>
+</div>
+
+<section id="durum-ekrani" hidden>
+  <h1 class="durum-baslik">Nasıl gidiyor?</h1>
+
+  <p class="ipucu">
+    Buradaki sayılar çevirilerinin doğru olup olmadığını ölçmüyor —
+    onu program bilemez, zaten bir cümlenin tek bir doğru çevirisi de
+    yok. Ölçtüğü şey şu: <strong>kaç cümleyi hiç yardım almadan
+    bitirdin.</strong> Yardım almak kötü değil; ama aldığın yardım
+    azalıyorsa ilerliyorsun demektir.
+  </p>
+
+  <div id="durum-seviyeler"></div>
+
+  <h2>Kelime kartların</h2>
+  <p id="durum-kelime"></p>
+
+  <h2>Kayıtların</h2>
+  <p class="ipucu">
+    Kayıtların yalnızca bu cihazda duruyor. Ara sıra yedekle — tarayıcı
+    verilerini silersen kayıtların da gider.
+  </p>
+  <div class="satir">
+    <button id="disa-aktar" type="button">Kayıtlarımı yedekle</button>
+    <button id="ice-aktar" type="button">Yedekten geri yükle</button>
+    <button id="anki-aktar" type="button">Kelimeleri indir (Anki)</button>
+    <!-- accept KOYMA: Android dosya seçicisi .json uzantısını tanımayıp
+         dosyaları seçilemez yapıyor. İçeriği JS zaten denetliyor. -->
+    <input id="dosya-sec" type="file" hidden>
+  </div>
+  <p id="kurulum-durumu"></p>
+
+  <p class="satir"><button id="durum-kapat" type="button">← Cümlelere dön</button></p>
+</section>
+
+<section id="kart-ekrani" hidden>
+  <p id="kart-ilerleme" class="konum"></p>
+
+  <div id="kart-govde">
+    <p id="kart-cumle" class="ingilizce" lang="en"></p>
+    <p class="ipucu">Bu kelime burada ne demek?</p>
+    <button id="kart-cevir" class="birincil" type="button">Kartı çevir</button>
+
+    <div id="kart-arka" hidden>
+      <p id="kart-sozluk" class="kelime-anlam"></p>
+      <!-- Kendi notun yalnızca yazdıysan çıkar: ipucuna bakılarak
+           üretilen kartlarda not yoktur, boş başlık göstermek anlamsız. -->
+      <div id="kart-kendi-notun" hidden>
+        <p><strong>Doğrusu:</strong> <span id="kart-dogrusu"></span></p>
+        <p><strong>Sen ne sanmıştın:</strong></p>
+        <p id="kart-sandigin"></p>
+      </div>
+      <div class="satir">
+        <button id="kart-bilemedim" type="button">Bilemedim</button>
+        <button id="kart-zorlandim" type="button">Zorlandım</button>
+        <button id="kart-biliyordum" type="button">Biliyordum</button>
+      </div>
+      <p><a href="#" id="kart-cikar">Bu kelimeyi biliyorum, bir daha sorma</a></p>
+    </div>
+  </div>
+
+  <div id="kart-bos" hidden>
+    <p>Henüz kartın yok. Birkaç cümle çalış, bilmediğin kelimeleri işaretle; kartlar kendiliğinden birikecek.</p>
+  </div>
+
+  <div id="kart-ozet" hidden>
+    <p id="kart-ozet-metin"></p>
+    <div class="satir">
+      <button id="kart-daha" type="button">15 kart daha</button>
+      <button id="kart-bitir" type="button">Bitir, cümlelere dön</button>
+    </div>
+  </div>
+
+  <p class="satir"><button id="kart-kapat" type="button">← Cümlelere dön</button></p>
+</section>
+</main>
+
+<dialog id="bilgi-kutusu">
+  <h2 id="bilgi-baslik"></h2>
+  <p id="bilgi-metin"></p>
+  <div class="satir">
+    <button id="bilgi-tamam" type="button">Tamam</button>
+    <button id="bilgi-vazgec" type="button" hidden>Vazgeç</button>
+  </div>
+</dialog>
+
+<footer class="atif">
+  <p>
+    Cümleler ve Türkçe çevirileri:
+    <a href="https://tatoeba.org/" target="_blank" rel="noopener">Tatoeba</a> (CC-BY 2.0 FR).
+    Kelime sıklık listesi:
+    <a href="https://github.com/hermitdave/FrequencyWords" target="_blank" rel="noopener">FrequencyWords</a> (CC-BY-SA 4.0).
+    Lemma listesi:
+    <a href="https://github.com/michmech/lemmatization-lists" target="_blank" rel="noopener">lemmatization-lists</a> (ODbL).
+    İngilizce-Türkçe sözlük:
+    <a href="https://freedict.org/" target="_blank" rel="noopener">FreeDict eng-tur</a> (GPL 2.0+).
+  </p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

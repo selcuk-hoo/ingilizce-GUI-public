@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#faf9f6">
+<title>Yardım — İngilizce Çalışma Aracı</title>
+<meta name="description" content="İngilizce Çalışma Aracı'nın yardım sayfası: çeviri kaydetmeden doğrusunun neden görünmediği, kelime kartları, kilitliyken bedelli ipucu ve iki çalışma yönü (anlama/üretme) anlatılıyor.">
+<link rel="icon" href="ikon.svg" type="image/svg+xml">
+<script>
+(function () {
+  try {
+    var secim = localStorage.getItem("ingilizce-tema");
+    if (secim !== "acik" && secim !== "koyu") {
+      secim = window.matchMedia
+        && window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "koyu" : "acik";
+    }
+    document.documentElement.setAttribute("data-tema", secim);
+  } catch (e) {
+    document.documentElement.setAttribute("data-tema", "acik");
+  }
+})();
+</script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="yardim">
+<main>
+
+<p class="geri"><a href="./">← Çalışmaya dön</a></p>
+
+<h1>Nasıl çalışıyor?</h1>
+
+<p>
+  Bu program dersini anlatmaz. Ama doğru kullanırsan gerçekten öğretir
+  — çünkü bir çeviriyi okuyup "anladım" demekle, kendin yazmaya
+  çalışmak aynı şey değil. Aklında kaldığını SANMAKLA gerçekten aklında
+  kalması arasındaki fark, tam da kendin üretmeye çalıştığın an ortaya
+  çıkıyor. Bu, hafızayla ilgili gerçek bir bulgu: bir bilgiyi
+  hatırlamaya çalışmak, onu bir daha okumaktan daha kalıcı öğretiyor.
+</p>
+
+<p>
+  Ama dürüst olalım: bu program tek başına yeterli değil. Kelimeleri
+  ve cümle kalıplarını tekrar tekrar görerek öğretir — dilbilgisi
+  kurallarını hiç AÇIKLAMAZ, sadece "burada bir şey ters gitti"
+  diye not düşmene izin verir. Yani bu bir ders kitabının yerine
+  geçmez — okulda ya da başka bir yerde öğrendiklerini
+  <strong>pekiştiren</strong> bir araç. İkisi birlikte işe yarar.
+</p>
+
+<h2>İki yön var</h2>
+
+<p>
+  Üstteki <strong>EN → TR / Anlama</strong> ve <strong>TR → EN /
+  Üretme</strong> düğmeleri kalıcı bir seçim — seviye seçimi gibi,
+  değiştirene kadar hangisini seçtiysen çalışma tümüyle onun
+  üzerinden ilerler:
+</p>
+
+<ol>
+  <li>
+    <strong>Anlama (EN → TR):</strong> İngilizce cümleyi oku, Türkçesini
+    kendin yaz.
+  </li>
+  <li>
+    <strong>Üretme (TR → EN):</strong> Türkçe cümleyi oku, İngilizcesini
+    kendin yaz.
+  </li>
+</ol>
+
+<p>
+  İkisi de aynı adımları izler:
+</p>
+
+<ol>
+  <li>
+    <strong>Cümleyi oku.</strong> Yukarıda büyük puntoyla duruyor.
+  </li>
+  <li>
+    <strong>Karşı dile kendin çevir.</strong> Kusursuz olması gerekmiyor.
+    Aklına ne geliyorsa yaz.
+  </li>
+  <li>
+    <strong>"Çeviriyi kaydet"e bas.</strong> Doğrusu ancak bundan
+    sonra açılır.
+  </li>
+  <li>
+    <strong>Kendi yazdığınla doğrusunu karşılaştır.</strong> Nerede
+    ayrılmışsın? (Üretmede tek bir doğru yol yok — "başka doğru
+    yollar" varsa onlar da gösterilir.)
+  </li>
+  <li>
+    <strong>Yanıldığın kelimeye dokun ve işaretle.</strong> Program o
+    kelimeyi aklında tutar, sonra sana kart olarak geri getirir.
+  </li>
+</ol>
+
+<h2>Neden doğru çeviriyi baştan göstermiyor?</h2>
+
+<p>
+  Çünkü göstersek işe yaramaz. Önce cevaba bakan biri kendini test etmiş
+  olmuyor, sadece "evet, ben de böyle düşünmüştüm" diyor. Oysa çoğu zaman
+  öyle düşünmemiştir. Kendi cümleni yazdığında ne bildiğin ve ne
+  bilmediğin ortaya çıkar — asıl işe yarayan kısım bu.
+</p>
+
+<h2>Kelimeyi bilmiyorsam ne olacak?</h2>
+
+<p>
+  Anlama (EN → TR) yönünde, henüz cevabı yazmadan da İngilizce
+  kelimeye dokunabilirsin, anlamı açılır. Bunu yapabilirsin, yasak
+  değil. Ama o kelime <strong>senin kelime kartlarına eklenir</strong>
+  ve sonra karşına tekrar çıkar. Yani bedava değil — zaten olması
+  gereken de bu.
+</p>
+
+<p>
+  Dikkat: dokununca sadece <em>o kelimenin</em> anlamı açılır. Cümlenin
+  çevirisi yine kapalı kalır.
+</p>
+
+<p>
+  Üretmede (TR → EN) bu erken bakma yok — henüz İngilizce bir metin
+  ortada olmadığı için kelimeye dokunacak bir şey yok. Sen cümleni
+  kaydedince İngilizcesi açılır; ondan sonra, tıpkı diğer yönde olduğu
+  gibi, kelimelere dokunup işaretleyebilirsin.
+</p>
+
+<h2>Kelimelerin altındaki çizgiler ne demek?</h2>
+
+<ul>
+  <li>
+    <strong>Noktalı çizgi:</strong> bu cümlede anlamına baktığın kelime.
+  </li>
+  <li>
+    <strong>Turuncu dalgalı çizgi:</strong> bu kelimede daha önce başka
+    cümlelerde de takılmışsın. Üstüne gelirsen nerede takıldığını
+    söyler — ama cevabı vermez, onu yine sen bulacaksın.
+  </li>
+</ul>
+
+<h2>Kart çalışmak</h2>
+
+<p>
+  "Kart çalış" düğmesine bastığında, işaretlediğin kelimeler karşına
+  teker teker gelir. Önce kelimeyi cümlenin içinde görürsün, ne demek
+  olduğunu hatırlamaya çalışırsın, sonra kartı çevirip bakarsın.
+</p>
+
+<p>
+  Üç cevaptan birini seçersin: <em>Bilemedim</em>, <em>Zorlandım</em>,
+  <em>Biliyordum</em>. Bilemediğin kelimeler sana daha sık gelir,
+  bildiklerin seyrekleşir. Bir kelimeyi gerçekten öğrendiysen
+  "Bu kelimeyi biliyorum, bir daha sorma" diyebilirsin.
+</p>
+
+<h2>"Durumum" ne gösteriyor?</h2>
+
+<p>
+  Program senin çevirinin doğru olup olmadığını <strong>bilmiyor</strong>.
+  Bir cümlenin tek bir doğru çevirisi yok zaten; seninki farklı olup
+  yine de doğru olabilir. O yüzden sana "not" vermiyor.
+</p>
+
+<p>
+  Bunun yerine şunu sayıyor: <strong>kaç cümleyi hiç yardım almadan
+  bitirdin.</strong> Yani kelimesine bakmadan, içinde bir şey
+  işaretlemeden. Yardım almak kötü değil — ama zamanla aldığın yardım
+  azalıyorsa ilerliyorsun demektir. "Son 20 cümle" satırı bunun için
+  var: genel ortalamandan yüksekse iyi gidiyorsun.
+</p>
+
+<h2>Seviyeler</h2>
+
+<p>
+  Dört seviye var: <strong>A1 Kolay</strong>, <strong>A2 Orta</strong>,
+  <strong>B1 Zor</strong>, <strong>B2 En zor</strong>. Her seviyenin
+  içinde de cümleler kolaydan zora doğru sıralı — yani baştan başlarsan
+  yavaş yavaş zorlaşır.
+</p>
+
+<p>
+  Zorlanıyorsan bir alt seviyeye geç. Utanılacak bir şey değil; kolay
+  gelen cümlelerle çalışmak, anlamadığın cümlelere bakıp durmaktan çok
+  daha fazla işe yarar.
+</p>
+
+<h2>Kayıtlarım nerede duruyor?</h2>
+
+<p>
+  Yalnızca kendi cihazında. Hiçbir yere gönderilmiyor, kimse görmüyor.
+  Bunun bir de kötü tarafı var: tarayıcının verilerini silersen
+  kayıtların da gider. Ara sıra <strong>"Kayıtlarımı yedekle"</strong>ye
+  basıp inen dosyayı saklarsan, gerektiğinde
+  <strong>"Yedekten geri yükle"</strong> ile geri alabilirsin.
+</p>
+
+<h2>İnternetsiz çalışır mı?</h2>
+
+<p>
+  Evet. Sayfayı bir kez açtıktan sonra (sağ altta "Çevrimdışı hazır"
+  yazısını görünce) internet olmadan da çalışır. Telefonda tarayıcı
+  menüsünden "Ana ekrana ekle" dersen normal bir uygulama gibi açılır.
+</p>
+
+<p class="geri"><a href="./">← Çalışmaya dön</a></p>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "İngilizce Çalışma Aracı",
+  "short_name": "İngilizce",
+  "description": "Kendi çevirini yaz, doğrusuyla karşılaştır, farkı kaydet.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f7f7f4",
+  "theme_color": "#f7f7f4",
+  "lang": "tr",
+  "dir": "ltr",
+  "icons": [
+    { "src": "ikon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "ikon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "ikon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "ikon-maskeli.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -1,0 +1,34 @@
+# Servis çalışanının kendi Cache Storage'ı çevrimdışı çalışmayı zaten
+# sağlıyor; tarayıcının AYRI HTTP önbelleği ikinci, bizim kontrolümüzde
+# olmayan bir katman. Bir dosya orada eski/bozuk bir hâliyle takılı
+# kalırsa, servis çalışanı "taze" diye ağa gidip aslında yine o eski
+# kopyayı alabiliyor. KABUK'taki her metin/kod dosyası için HTTP
+# önbelleğini kapatıyoruz — joker (/*) DEĞİL, tek tek (bkz. Kur'an
+# aracındaki aynı desen, orada jokerin siteyi 404'e düşürdüğü görüldü).
+
+/
+  Cache-Control: no-store
+
+/index.html
+  Cache-Control: no-store
+
+/sw.js
+  Cache-Control: no-store
+
+/surum.js
+  Cache-Control: no-store
+
+/app.js
+  Cache-Control: no-store
+
+/style.css
+  Cache-Control: no-store
+
+/manifest.json
+  Cache-Control: no-store
+
+/yardim.html
+  Cache-Control: no-store
+
+/veri/dizin.json
+  Cache-Control: no-store

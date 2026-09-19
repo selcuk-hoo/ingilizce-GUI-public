@@ -1,0 +1,541 @@
+/* Sade, yüksek kontrast, tek sütun. Renk yalnızca anlam taşıdığı
+   yerde: vurgu rengi = "buna bir daha bak". Kırmızı yok — hata damgası
+   basmıyoruz.
+
+   İki tema var. Renkler yalnızca burada, :root ve [data-tema="koyu"]
+   altında tanımlanır; başka hiçbir kural sabit renk yazmaz, yoksa
+   temalardan biri sessizce bozulur. */
+
+:root {
+  --kagit: #faf9f6;
+  --yuzey: #ffffff;
+  --murekkep: #1c1b19;
+  --soluk: #6b6862;
+  --cizgi: #e3e0d9;
+  --vurgu: #a35a12;
+  --vurgu-yumusak: #f6ecd9;
+  --birincil-zemin: #1c1b19;
+  --birincil-yazi: #faf9f6;
+  --golge: rgba(28, 27, 25, 0.06);
+  --perde: rgba(28, 27, 25, 0.35);
+  /* Kelime anlamı kutusu: referans çeviriden ayırt edilsin diye ayrı
+     renk — soluk yeşil, "bilgi geldi" hissi versin. */
+  --anlam-zemin: #e7f3e3;
+  --anlam-kenar: #6a9c58;
+}
+
+:root[data-tema="koyu"] {
+  --kagit: #17161a;
+  --yuzey: #201f25;
+  --murekkep: #e9e6df;
+  --soluk: #a7a199;
+  --cizgi: #343139;
+  --vurgu: #e0a458;
+  --vurgu-yumusak: #3a2f1e;
+  --birincil-zemin: #e9e6df;
+  --birincil-yazi: #17161a;
+  --golge: rgba(0, 0, 0, 0.35);
+  --perde: rgba(0, 0, 0, 0.55);
+  --anlam-zemin: #1f2b1c;
+  --anlam-kenar: #4f7a42;
+}
+
+* { box-sizing: border-box; }
+
+/* Radyo düğmeleri ve bağlantılar işletim sisteminin/tarayıcının
+   mavisini kullanmasın; iki temada da paletle aynı renk olsunlar. */
+:root { accent-color: var(--vurgu); color-scheme: light; }
+:root[data-tema="koyu"] { color-scheme: dark; }
+
+a { color: var(--vurgu); }
+
+body {
+  margin: 0;
+  padding: 0 1rem 3rem;
+  background: var(--kagit);
+  color: var(--murekkep);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-text-size-adjust: 100%;
+}
+
+header, main, footer {
+  max-width: 44rem;
+  margin: 0 auto;
+}
+
+h2 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--soluk);
+  margin: 1.5rem 0 0.5rem;
+}
+
+/* --- gezinme ---
+   İki satır: üstte seviye + araçlar, altta cümle gezinmesi. Tek satıra
+   sığdırmaya çalışmak dar ekranda "Kart çalış"ı tek başına alta
+   düşürüyordu. */
+
+.gezinme {
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--cizgi);
+}
+
+.gezinme-ust, .gezinme-alt {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.gezinme-alt { margin-top: 0.5rem; }
+
+.seviye-secim, .yon-secim {
+  display: flex;
+  gap: 0.2rem;
+}
+
+/* Seviye ve yön düğmeleri aynı iki satırlı kalıbı paylaşır: üstte kod
+   (A1, EN → TR), altta ne demek olduğu. Ortaokul öğrencisine CEFR kodu
+   ya da "yön" kelimesi tek başına bir şey anlatmıyor. */
+.seviye-secim button, .yon-secim button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  min-width: 3.6rem;
+  padding: 0.25rem 0.5rem;
+  line-height: 1.25;
+}
+
+.seviye-kod { font-size: 0.95rem; font-weight: 600; }
+.seviye-ad { font-size: 0.72rem; color: var(--soluk); }
+
+.seviye-secim button[aria-pressed="true"] .seviye-ad,
+.yon-secim button[aria-pressed="true"] .seviye-ad {
+  color: var(--birincil-yazi);
+  opacity: 0.8;
+}
+
+.seviye-secim button[aria-pressed="true"],
+.yon-secim button[aria-pressed="true"] {
+  background: var(--birincil-zemin);
+  color: var(--birincil-yazi);
+  border-color: var(--birincil-zemin);
+}
+
+#tema-dugme {
+  min-width: 2.6rem;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+#atla-form {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+#atla-form input { width: 4.5rem; }
+
+.konum {
+  color: var(--soluk);
+  font-size: 0.88rem;
+  margin: 0.6rem 0 0;
+}
+
+.gezinme-hata {
+  color: var(--vurgu);
+  margin: 0.4rem 0 0;
+  font-size: 0.9rem;
+}
+
+/* --- çalışılan cümle ---
+   #cumle-karti kendisi kutu DEĞİL, yalnızca dikey boşluklayıcı — içindeki
+   her mantıksal parça (cümle, senin çevirin, doğru çeviri, kelime
+   paneli, işaretlenenler) kendi `.kutu`su. Hepsini tek kutuya
+   sıkıştırmak (ilk deneme) cevap verilince düz metin yığınına
+   dönüşüyordu; ayrı kutular göz gezdirirken "senin" ile "doğrusu"nu
+   birbirinden ayırıyor. */
+
+#cumle-karti {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  margin: 1.2rem 0;
+}
+
+/* Önceki/Sonraki, soru kutusunun tam yanında — elini karttan
+   kaldırmadan ileri geri gidilsin diye. */
+.cumle-gezinme {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cumle-gezinme #cumle-kutusu {
+  flex: 1;
+  min-width: 0;
+}
+
+.ok-dugmesi {
+  flex: none;
+  min-width: 2.4rem;
+  padding: 0.4rem;
+  font-size: 1.3rem;
+  line-height: 1;
+  align-self: stretch;
+}
+
+@media (max-width: 30rem) {
+  .ok-dugmesi { min-width: 2rem; font-size: 1.15rem; }
+}
+
+/* :not([hidden]) şart -- yoksa ID seçicisinin özgüllüğü tarayıcının
+   varsayılan `[hidden] { display: none }` kuralını eziyor ve kutu
+   "hidden" iken bile görünür kalıyor (eski/kalıntı metinle). */
+#referans-alani:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+#alt-liste {
+  margin: 0.3rem 0;
+  padding-left: 1.2rem;
+}
+
+#alt-liste li { margin: 0.25rem 0; }
+
+.kutu {
+  background: var(--yuzey);
+  border: 1px solid var(--cizgi);
+  border-radius: 8px;
+  padding: 1.1rem 1.2rem;
+  box-shadow: 0 1px 2px var(--golge);
+}
+
+.kutu-baslik {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--soluk);
+  margin-bottom: 0.3rem;
+}
+
+/* Doğru çeviri: tek doğru bilginin ortaya çıktığı an — soluk yeşil,
+   kelime anlamı kutusuyla (.kelime-anlam) aynı renk dili. */
+.kutu.dogru {
+  background: var(--anlam-zemin);
+  border-color: var(--anlam-kenar);
+}
+
+.kutu.dogru #referans-metin { font-size: 1.1rem; }
+
+.ingilizce {
+  font-size: 28px;
+  line-height: 1.65;
+  margin: 0 0 0.5rem;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.ingilizce .kelime {
+  cursor: default;
+  padding: 0.02em 0.04em;
+  margin: 0 -0.04em;
+  border-radius: 3px;
+}
+
+/* Kilit açıkken tıklanabilir olduğunu göster */
+.ingilizce.acik .kelime { cursor: pointer; }
+
+.ingilizce.acik .kelime:hover { background: var(--vurgu-yumusak); }
+
+.ingilizce .kelime.secili { background: var(--vurgu-yumusak); }
+
+/* İpucuna bakılmış kelime. Soluk ve noktalı: bilgi, uyarı değil —
+   turuncu dalgalı çizgiyle (aşağıda) karışmasın. */
+.ingilizce .kelime.bakildi {
+  text-decoration: underline dotted var(--soluk);
+  text-underline-offset: 5px;
+}
+
+/* "Buna bir daha bak" — dikkat işareti, hata damgası değil */
+.ingilizce .kelime.uyari {
+  text-decoration: underline wavy var(--vurgu);
+  text-underline-offset: 6px;
+  text-decoration-thickness: 2px;
+}
+
+.ipucu {
+  color: var(--soluk);
+  font-size: 0.88rem;
+  margin: 0.3rem 0;
+}
+
+/* --- formlar ve düğmeler --- */
+
+textarea, input[type="text"] {
+  width: 100%;
+  font: inherit;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--cizgi);
+  border-radius: 6px;
+  background: var(--yuzey);
+  color: var(--murekkep);
+}
+
+textarea { resize: vertical; }
+
+button {
+  font: inherit;
+  min-height: 2.5rem;
+  padding: 0.4rem 0.85rem;
+  border: 1px solid var(--cizgi);
+  border-radius: 6px;
+  background: var(--yuzey);
+  color: var(--murekkep);
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) { border-color: var(--soluk); }
+
+button:disabled {
+  color: var(--soluk);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Adımın asıl eylemi: her ekranda tek bir tane */
+button.birincil:not(:disabled) {
+  background: var(--birincil-zemin);
+  color: var(--birincil-yazi);
+  border-color: var(--birincil-zemin);
+  font-weight: 500;
+}
+
+:focus-visible {
+  outline: 2px solid var(--vurgu);
+  outline-offset: 2px;
+}
+
+.satir {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0.7rem 0;
+}
+
+.durum {
+  color: var(--soluk);
+  font-size: 0.88rem;
+}
+
+fieldset {
+  border: 1px solid var(--cizgi);
+  border-radius: 6px;
+  margin: 0.8rem 0;
+  padding: 0.6rem 0.85rem;
+}
+
+legend { color: var(--soluk); font-size: 0.88rem; }
+
+fieldset label {
+  display: block;
+  padding: 0.25rem 0;
+  cursor: pointer;
+}
+
+form > label {
+  display: block;
+  margin-top: 0.7rem;
+  font-size: 0.92rem;
+  color: var(--soluk);
+}
+
+/* --- referans çeviri ve kelime paneli --- */
+
+/* Kelime anlamı: referans çeviriyle karışmasın diye ayrı renkte —
+   soluk yeşil zemin, "bilgi geldi" hissi versin. */
+.kelime-anlam {
+  padding: 0.7rem 0.9rem;
+  background: var(--anlam-zemin);
+  border: 1px solid var(--anlam-kenar);
+  border-left: 3px solid var(--anlam-kenar);
+  border-radius: 0 6px 6px 0;
+  margin: 0.4rem 0 0.8rem;
+}
+
+#kelime-baslik { font-family: Georgia, "Times New Roman", serif; }
+
+/* Detaylı alanları aç/kapa düğmesi — form elemanı gibi değil, bağlantı
+   gibi görünsün ki asıl eylemlerle (İşaretle/Kapat) karışmasın. */
+.baglanti-dugme {
+  background: none;
+  border: none;
+  padding: 0.3rem 0;
+  min-height: 0;
+  color: var(--vurgu);
+  font-size: 0.9rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.baglanti-dugme:hover { border-color: transparent; }
+
+#detay-alanlar { margin-top: 0.4rem; }
+
+/* --- listeler --- */
+
+#hata-liste {
+  margin: 0.4rem 0;
+  padding-left: 1.2rem;
+}
+
+#hata-liste li { margin: 0.35rem 0; }
+
+#hata-liste .kategori { color: var(--soluk); }
+
+.bosluk { flex: 1; }
+
+#kurulum-durumu {
+  color: var(--soluk);
+  font-size: 0.85rem;
+}
+
+/* --- kart ekranı --- */
+
+#kart-cumle {
+  background: var(--yuzey);
+  border: 1px solid var(--cizgi);
+  border-radius: 8px;
+  padding: 1.1rem 1.2rem;
+  margin: 1rem 0 0.5rem;
+  box-shadow: 0 1px 2px var(--golge);
+}
+
+#kart-arka { margin-top: 1.2rem; }
+
+#kart-sandigin {
+  white-space: pre-wrap;
+  padding: 0.7rem 0.9rem;
+  background: var(--yuzey);
+  border: 1px solid var(--cizgi);
+  border-left: 3px solid var(--cizgi);
+  border-radius: 0 6px 6px 0;
+}
+
+#kart-cikar a, #kart-cikar { color: var(--soluk); }
+
+/* --- bilgi kutusu --- */
+
+dialog {
+  max-width: 30rem;
+  border: 1px solid var(--cizgi);
+  border-radius: 8px;
+  background: var(--kagit);
+  color: var(--murekkep);
+  padding: 1.2rem;
+}
+
+dialog::backdrop { background: var(--perde); }
+
+/* --- hata bildirimi --- */
+
+#js-hata {
+  background: var(--vurgu);
+  color: var(--kagit);
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+}
+
+/* --- durum ekranı --- */
+
+.durum-baslik {
+  font-size: 1.4rem;
+  margin: 1.2rem 0 0.5rem;
+}
+
+.durum-satir {
+  padding: 0.9rem 1rem;
+  margin: 0.8rem 0;
+  background: var(--yuzey);
+  border: 1px solid var(--cizgi);
+  border-radius: 8px;
+}
+
+.durum-satir h2 {
+  margin: 0 0 0.4rem;
+  color: var(--murekkep);
+  font-size: 1rem;
+}
+
+.durum-satir p { margin: 0.3rem 0; }
+
+.cubuk {
+  height: 8px;
+  margin: 0.5rem 0;
+  background: var(--cizgi);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.cubuk span {
+  display: block;
+  height: 100%;
+  background: var(--vurgu);
+}
+
+/* --- yardım sayfası --- */
+
+.yardim main { padding-top: 1.5rem; }
+
+.yardim h1 {
+  font-size: 1.5rem;
+  margin: 0 0 1rem;
+}
+
+.yardim h2 {
+  font-size: 1.1rem;
+  color: var(--murekkep);
+  margin: 2rem 0 0.5rem;
+}
+
+.yardim li { margin: 0.5rem 0; }
+
+.yardim ol, .yardim ul { padding-left: 1.4rem; }
+
+.geri { margin: 1.5rem 0; }
+
+.yardim-link {
+  color: var(--soluk);
+  font-size: 0.85rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.yardim-link:hover { text-decoration: underline; }
+
+/* --- atıf --- */
+
+.atif {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--cizgi);
+  color: var(--soluk);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.atif a { color: var(--soluk); }
+
+/* --- dar ekran --- */
+
+@media (max-width: 30rem) {
+  body { padding: 0 0.8rem 2.5rem; }
+  .ingilizce { font-size: 24px; }
+  .kutu { padding: 0.9rem 1rem; }
+}

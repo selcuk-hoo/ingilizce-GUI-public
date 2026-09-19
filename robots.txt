@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Üretilen veri dosyaları (seviye JSON'ları, sözlük) taranmasın: arama
+# sonucunda işe yaramazlar, yalnızca tarama bütçesi harcarlar.
+Disallow: /veri/
+
+Sitemap: https://ingilizce-gui-public.selcukh.workers.dev/sitemap.xml
