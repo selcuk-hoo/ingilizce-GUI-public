@@ -73,24 +73,47 @@ h2 {
   margin: 1.5rem 0 0.5rem;
 }
 
-/* --- gezinme ---
-   İki satır: üstte seviye + araçlar, altta cümle gezinmesi. Tek satıra
-   sığdırmaya çalışmak dar ekranda "Kart çalış"ı tek başına alta
-   düşürüyordu. */
+/* --- site başlığı ---
+   İkon + ad, gezinmenin üstünde. Google'dan gelen biri ilk bakışta
+   neye baktığını anlasın diye (bkz. Kur'an aracındaki aynı desen).
+   Telefonda dikey yer kıymetli olduğu için tek satır, alt açıklama
+   yok — programı ilk kez açan zaten kart havuzu vb. görmüyor henüz. */
+.site-basligi {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  margin: 0.8rem 0;
+}
+
+.site-basligi img { width: 48px; height: 48px; flex: none; }
+
+/* Kalın ve belirgin: gövde metniyle aynı ağırlıkta olsa sıradan bir
+   satır gibi görünürdü. Büyük harf + vurgu rengi: ikonun kendi
+   renkleriyle (koyu zemin, turuncu ok) tek bir künye gibi okunsun. */
+.site-basligi h1 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: bold;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--vurgu);
+}
+
+/* --- gezinme --- */
 
 .gezinme {
   padding: 0.7rem 0;
   border-bottom: 1px solid var(--cizgi);
 }
 
-.gezinme-ust, .gezinme-alt {
+.gezinme-ust {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
   align-items: center;
 }
-
-.gezinme-alt { margin-top: 0.5rem; }
 
 .seviye-secim, .yon-secim {
   display: flex;
@@ -131,14 +154,6 @@ h2 {
   font-size: 1rem;
   line-height: 1;
 }
-
-#atla-form {
-  display: flex;
-  gap: 0.35rem;
-  align-items: center;
-}
-
-#atla-form input { width: 4.5rem; }
 
 .konum {
   color: var(--soluk);
@@ -538,4 +553,7 @@ dialog::backdrop { background: var(--perde); }
   body { padding: 0 0.8rem 2.5rem; }
   .ingilizce { font-size: 24px; }
   .kutu { padding: 0.9rem 1rem; }
+  .site-basligi { gap: 0.5rem; margin: 0.6rem 0; }
+  .site-basligi img { width: 40px; height: 40px; }
+  .site-basligi h1 { font-size: 1.12rem; letter-spacing: 0.03em; }
 }

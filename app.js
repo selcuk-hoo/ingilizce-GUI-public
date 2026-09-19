@@ -38,6 +38,7 @@ let durum = {
   seviye: null,
   yon: "en_tr",
   indeks: 0,
+  gecmis: [],            // bu oturumda "‹" ile geri dönülecek indeksler
   cumle: null,
   acik: false,          // doğru çeviri/cümle açıldı mı
   seciliSira: null,
@@ -242,9 +243,10 @@ function cumleCiz(uyarililar = new Map()) {
 function konumYaz() {
   const bilgi = durum.dizin.find((s) => s.ad === durum.seviye);
   const ad = SEVIYE_ADI[durum.seviye] || durum.seviye;
-  el("konum").textContent = `${durum.seviye} · ${ad} — `
-    + `${durum.indeks + 1}. cümle / ${bilgi ? bilgi.cumle_sayisi : "?"}`;
-  el("atla-no").value = String(durum.indeks + 1);
+  // Cümle RASTGELE geldiği için "N. cümle / toplam" göstermek sıralı
+  // ilerlediğin izlenimi verirdi — yalnızca havuz büyüklüğü var.
+  el("konum").textContent = `${durum.seviye} · ${ad}`
+    + (bilgi ? ` — ${bilgi.cumle_sayisi} cümle havuzu` : "");
   for (const dugme of el("seviye-secim").children) {
     dugme.setAttribute("aria-pressed", String(dugme.dataset.seviye === durum.seviye));
   }
@@ -609,30 +611,48 @@ async function hataKaydet(olay) {
   await hatalariCiz();
 }
 
+/* Havuzda binlerce cümle var ve aralarında anlamlı bir sıra yok
+   (zorluk sıralaması yalnızca SEÇİM ölçütüydü, bkz. CLAUDE.md Faz 1 —
+   "seçimden SONRA" yapılıyordu, cümle cümle ilerlemek için değil).
+   Bu yüzden sırayla gitmenin ya da numarayla atlamanın ("No / Git")
+   kullanıcıya bir faydası yoktu; rastgele çekmek daha doğal. */
+function rastgeleIndeks(disinda, uzunluk) {
+  if (uzunluk <= 1) return 0;
+  const i = Math.floor(Math.random() * uzunluk);
+  // Üst üste aynı cümlenin gelme ihtimali zaten çok düşük ama
+  // bedelsiz bir kontrol — hiç değişmeden kalması can sıkıcı olurdu.
+  return i === disinda ? (i + 1) % uzunluk : i;
+}
+
 async function seviyeDegistir(ad) {
   durum.seviye = ad;
-  durum.indeks = 0;
+  durum.gecmis = [];
+  const veri = await seviyeYukle(ad);
+  durum.indeks = Math.floor(Math.random() * veri.cumleler.length);
   await cumleGoster();
 }
 
-async function ilerle(adim) {
+/* Sağdaki ok: yeni rastgele bir cümle çeker, şimdikini geçmiş
+   yığınına ("‹" ile geri dönülecek) iter. */
+async function yeniRastgeleCumle() {
   const veri = await seviyeYukle(durum.seviye);
-  const yeni = durum.indeks + adim;
-  if (yeni < 0) { gezinmeHatasi("İlk cümledesin."); return; }
-  if (yeni >= veri.cumleler.length) { gezinmeHatasi("Son cümledesin."); return; }
-  durum.indeks = yeni;
-  await cumleGoster();
-}
-
-async function atla(olay) {
-  olay.preventDefault();
-  const no = parseInt(el("atla-no").value, 10);
-  const veri = await seviyeYukle(durum.seviye);
-  if (!Number.isFinite(no) || no < 1 || no > veri.cumleler.length) {
-    gezinmeHatasi(`1 ile ${veri.cumleler.length} arasında bir numara yaz.`);
+  if (veri.cumleler.length <= 1) {
+    gezinmeHatasi("Bu seviyede başka cümle yok.");
     return;
   }
-  durum.indeks = no - 1;
+  durum.gecmis.push(durum.indeks);
+  durum.indeks = rastgeleIndeks(durum.indeks, veri.cumleler.length);
+  await cumleGoster();
+}
+
+/* Soldaki ok: rastgele bir şey ÇEKMEZ, bu oturumda az önce görülene
+   geri döner — "geri" düğmesinin sürpriz yapmaması için. */
+async function oncekiCumleyeDon() {
+  if (!durum.gecmis.length) {
+    gezinmeHatasi("Bu oturumda daha önce başka cümle yok.");
+    return;
+  }
+  durum.indeks = durum.gecmis.pop();
   await cumleGoster();
 }
 
@@ -1119,9 +1139,8 @@ function seviyeDugmeleriniCiz() {
 
 function baglantilariKur() {
   el("tema-dugme").addEventListener("click", temaDegistir);
-  el("onceki").addEventListener("click", () => ilerle(-1));
-  el("sonraki").addEventListener("click", () => ilerle(1));
-  el("atla-form").addEventListener("submit", atla);
+  el("onceki").addEventListener("click", oncekiCumleyeDon);
+  el("sonraki").addEventListener("click", yeniRastgeleCumle);
   el("ceviri-kaydet").addEventListener("click", ceviriKaydet);
   el("hata-form").addEventListener("submit", hataKaydet);
   el("hata-iptal").addEventListener("click", kelimeKapat);

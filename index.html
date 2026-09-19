@@ -81,6 +81,14 @@
 <script src="surum.js"></script>
 
 <header>
+  <!-- Görünür site başlığı: Google'dan gelen biri ilk bakışta neye
+       baktığını anlasın diye (bkz. Kur'an aracındaki aynı desen).
+       Sayfadaki tek h1. -->
+  <div class="site-basligi">
+    <img src="ikon.svg" alt="" width="48" height="48">
+    <h1>İngilizce Çalışma Aracı</h1>
+  </div>
+
   <nav class="gezinme">
     <div class="gezinme-ust">
       <div class="seviye-secim" id="seviye-secim"></div>
@@ -100,14 +108,6 @@
       <button id="tema-dugme" type="button" aria-label="Temayı değiştir"></button>
       <a class="yardim-link" href="yardim.html">Yardım</a>
     </div>
-    <div class="gezinme-alt">
-      <form id="atla-form" autocomplete="off">
-        <label for="atla-no">No</label>
-        <input id="atla-no" type="text" inputmode="numeric" size="5"
-               autocomplete="off" aria-label="Cümle numarası">
-        <button type="submit">Git</button>
-      </form>
-    </div>
   </nav>
   <p id="konum" class="konum"></p>
   <p id="gezinme-hata" class="gezinme-hata" hidden></p>
@@ -121,12 +121,14 @@
        verildikten sonra düz metin yığını gibi görünüyordu; kutular
        ayrılınca "senin" ile "doğrusu" göz gezdirirken karışmıyor. -->
   <section id="cumle-karti">
-    <!-- Önceki/Sonraki artık üstteki gezinme çubuğunda değil, tam
-         sorunun yanında — elini karttan kaldırmadan ileri geri
-         gidilsin diye. "No / Git" (belirli bir cümleye atlama) ayrı
-         bir eylem olduğu için üstte kaldı. -->
+    <!-- Cümleler RASTGELE gelir — sırayla gitmenin ya da numarayla
+         atlamanın (eski "No / Git") bir anlamı yok, havuzda binlerce
+         cümle var ve aralarında anlamlı bir sıra da zaten yok (bkz.
+         CLAUDE.md, "Rastgele cümle seçimi"). Sağdaki ok yeni rastgele
+         bir cümle çeker, soldaki bu oturumda az önce gördüklerine
+         geri döner (basit bir geçmiş yığını, app.js: durum.gecmis). -->
     <div class="cumle-gezinme">
-      <button id="onceki" type="button" class="ok-dugmesi" aria-label="Önceki cümle" title="Önceki cümle">‹</button>
+      <button id="onceki" type="button" class="ok-dugmesi" aria-label="Az önce gördüğün cümle" title="Az önce gördüğün cümle">‹</button>
       <div class="kutu" id="cumle-kutusu">
         <!-- #ingilizce TEK düğüm: tıklanabilir İngilizce metin, kelime
              paneli/hata kaydı/kart havuzu ona bağlı. Yöne göre yeri
@@ -150,7 +152,7 @@
           </p>
         </div>
       </div>
-      <button id="sonraki" type="button" class="ok-dugmesi" aria-label="Sonraki cümle" title="Sonraki cümle">›</button>
+      <button id="sonraki" type="button" class="ok-dugmesi" aria-label="Yeni (rastgele) cümle" title="Yeni (rastgele) cümle">›</button>
     </div>
 
     <div id="referans-alani" hidden>
