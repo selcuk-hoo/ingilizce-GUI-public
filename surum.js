@@ -2,4 +2,4 @@
    güvenmeden, doğrudan CacheStorage'a bakarak cevaplayabiliyor.
    sw.js'teki SURUM ile aynı değeri taşır — pwa_hazirla.py her
    çalıştığında üzerine yazar, elle değiştirme. */
-const INGILIZCE_SURUM = "e9663915c92f";
+const INGILIZCE_SURUM = "61e0738927f9";

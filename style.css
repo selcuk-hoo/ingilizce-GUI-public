@@ -102,10 +102,11 @@ h2 {
 }
 
 /* --- gezinme ---
-   Üç ayrı satır: araçlar (sağa yaslı), seviye, yön. Hepsi tek satırda
-   sıkışınca hangi düğmenin ne için olduğu (araç mı, seçim mi) göz
-   gezdirirken karışıyordu; ayrı satırlar her grubu kendi başına
-   okunur kılıyor. */
+   Üç ayrı satır: araçlar, seviye, yön. Hepsi tek satırda sıkışınca
+   hangi düğmenin ne için olduğu (araç mı, seçim mi) göz gezdirirken
+   karışıyordu; ayrı satırlar her grubu kendi başına okunur kılıyor.
+   Araç satırının kendisi de ikiye ayrılıyor: solda "Durumum / Kart
+   çalış" (çalışmayla ilgili), sağda "tema / Yardım" (uygulama geneli). */
 
 .gezinme {
   padding: 0.7rem 0;
@@ -120,7 +121,14 @@ h2 {
   flex-wrap: wrap;
   gap: 0.4rem;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
+}
+
+.arac-grup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
 }
 
 .seviye-secim, .yon-secim {
